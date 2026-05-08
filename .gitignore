@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+.expo-check/
+.expo-web-check/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native generated folders
+ios/
+android/
+
+# Logs
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# OS/editor
+.DS_Store
+Thumbs.db

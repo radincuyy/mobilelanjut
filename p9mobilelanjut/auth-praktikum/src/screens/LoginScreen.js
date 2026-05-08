@@ -8,6 +8,9 @@ import * as SecureStore from 'expo-secure-store';
 
 import { auth } from '../config/firebase';
 
+const BIOMETRIC_EMAIL_KEY = 'biometric_email';
+const BIOMETRIC_PASSWORD_KEY = 'biometric_password';
+
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -17,18 +20,32 @@ export default function LoginScreen({ navigation }) {
       await signInWithEmailAndPassword(auth, email, password);
 
       await SecureStore.setItemAsync('auth_token', 'logged_in');
+      await SecureStore.setItemAsync(BIOMETRIC_EMAIL_KEY, email);
+      await SecureStore.setItemAsync(BIOMETRIC_PASSWORD_KEY, password);
     } catch (e) {
       Alert.alert('Login gagal', e.message);
     }
   };
 
   const handleBiometric = async () => {
-    const token = await SecureStore.getItemAsync('auth_token');
+    const savedEmail = await SecureStore.getItemAsync(BIOMETRIC_EMAIL_KEY);
+    const savedPassword = await SecureStore.getItemAsync(BIOMETRIC_PASSWORD_KEY);
 
-    if (!token) {
+    if (!savedEmail || !savedPassword) {
       Alert.alert(
         'Belum ada session',
         'Silakan login dulu dengan password.'
+      );
+      return;
+    }
+
+    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+    if (!hasHardware || !isEnrolled) {
+      Alert.alert(
+        'Biometric belum aktif',
+        'Aktifkan fingerprint atau face unlock di HP Anda.'
       );
       return;
     }
@@ -39,7 +56,11 @@ export default function LoginScreen({ navigation }) {
     });
 
     if (result.success) {
-      Alert.alert('Berhasil', 'Welcome back!');
+      try {
+        await signInWithEmailAndPassword(auth, savedEmail, savedPassword);
+      } catch (e) {
+        Alert.alert('Login gagal', e.message);
+      }
     } else {
       Alert.alert('Gagal', 'Biometric tidak cocok.');
     }
