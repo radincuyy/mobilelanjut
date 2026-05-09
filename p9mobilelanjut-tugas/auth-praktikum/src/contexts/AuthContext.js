@@ -37,7 +37,7 @@ export function AuthProvider({ children }) {
       await signOut(auth);
       await SecureStore.deleteItemAsync('auth_token');
 
-      if (showIdleAlert) {
+      if (showIdleAlert === true) {
         Alert.alert(
           'Sesi berakhir',
           'Anda otomatis logout karena idle selama 5 menit.'

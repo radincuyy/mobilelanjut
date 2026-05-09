@@ -1,74 +1,19 @@
 // src/screens/LoginScreen.js
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, Button, Text, Alert } from 'react-native';
-import {
-  GoogleAuthProvider,
-  signInWithCredential,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
-import * as Google from 'expo-auth-session/providers/google';
-import * as WebBrowser from 'expo-web-browser';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import * as LocalAuthentication from 'expo-local-authentication';
 import * as SecureStore from 'expo-secure-store';
 
 import { auth } from '../config/firebase';
 
-WebBrowser.maybeCompleteAuthSession();
-
 const BIOMETRIC_EMAIL_KEY = 'biometric_email';
 const BIOMETRIC_PASSWORD_KEY = 'biometric_password';
-const GOOGLE_WEB_CLIENT_ID = 'ISI_WEB_CLIENT_ID.apps.googleusercontent.com';
-const GOOGLE_ANDROID_CLIENT_ID = 'ISI_ANDROID_CLIENT_ID.apps.googleusercontent.com';
-const GOOGLE_IOS_CLIENT_ID = 'ISI_IOS_CLIENT_ID.apps.googleusercontent.com';
-
-const isPlaceholderClientId = (clientId) => clientId.startsWith('ISI_');
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const isGoogleConfigured = !isPlaceholderClientId(GOOGLE_WEB_CLIENT_ID);
-  const [googleRequest, googleResponse, promptGoogleLogin] =
-    Google.useIdTokenAuthRequest({
-      clientId: GOOGLE_WEB_CLIENT_ID,
-      webClientId: GOOGLE_WEB_CLIENT_ID,
-      androidClientId: isPlaceholderClientId(GOOGLE_ANDROID_CLIENT_ID)
-        ? GOOGLE_WEB_CLIENT_ID
-        : GOOGLE_ANDROID_CLIENT_ID,
-      iosClientId: isPlaceholderClientId(GOOGLE_IOS_CLIENT_ID)
-        ? GOOGLE_WEB_CLIENT_ID
-        : GOOGLE_IOS_CLIENT_ID,
-      selectAccount: true,
-    });
-
-  useEffect(() => {
-    const loginWithGoogleCredential = async () => {
-      if (googleResponse?.type !== 'success') return;
-
-      const idToken =
-        googleResponse.params?.id_token || googleResponse.authentication?.idToken;
-      const accessToken =
-        googleResponse.params?.access_token ||
-        googleResponse.authentication?.accessToken;
-
-      if (!idToken && !accessToken) {
-        Alert.alert(
-          'Login Google gagal',
-          'Token Google tidak ditemukan. Periksa konfigurasi client ID.'
-        );
-        return;
-      }
-
-      try {
-        const credential = GoogleAuthProvider.credential(idToken, accessToken);
-        await signInWithCredential(auth, credential);
-      } catch (e) {
-        Alert.alert('Login Google gagal', e.message);
-      }
-    };
-
-    loginWithGoogleCredential();
-  }, [googleResponse]);
 
   const handleLogin = async () => {
     try {
@@ -121,22 +66,6 @@ export default function LoginScreen({ navigation }) {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    if (!isGoogleConfigured) {
-      Alert.alert(
-        'Konfigurasi Google belum lengkap',
-        'Isi GOOGLE_WEB_CLIENT_ID di LoginScreen.js, lalu aktifkan Google provider di Firebase Authentication.'
-      );
-      return;
-    }
-
-    try {
-      await promptGoogleLogin();
-    } catch (e) {
-      Alert.alert('Login Google gagal', e.message);
-    }
-  };
-
   return (
     <View style={{ padding: 20 }}>
       <TextInput
@@ -154,12 +83,6 @@ export default function LoginScreen({ navigation }) {
       />
 
       <Button title="Login" onPress={handleLogin} />
-
-      <Button
-        title="Login dengan Google"
-        onPress={handleGoogleLogin}
-        disabled={!googleRequest}
-      />
 
       <Button
         title="Login dengan Biometric"

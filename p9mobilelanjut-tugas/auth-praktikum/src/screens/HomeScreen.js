@@ -12,7 +12,7 @@ export default function HomeScreen() {
       <Text>
         Email {user?.emailVerified ? 'sudah diverifikasi' : 'belum diverifikasi'}
       </Text>
-      <Button title="Logout" onPress={logout} />
+      <Button title="Logout" onPress={() => logout()} />
     </View>
   );
 }
