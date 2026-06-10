@@ -11,6 +11,7 @@ Repo: https://github.com/radincuyy/mobilelanjut
 | [p9mobilelanjut/](p9mobilelanjut/) | 9 | Firebase Auth praktikum (email/password + biometric) |
 | [p9mobilelanjut-tugas/](p9mobilelanjut-tugas/) | 9 (tugas) | Auth + auto-logout 5 menit idle |
 | [p11mobilelanjut/](p11mobilelanjut/) | 11 | Real-time chat application (Firestore) |
+| [p12mobilelanjut/](p12mobilelanjut/) | 12 | Social media app features: story, post filter, map, share, notification, gallery |
 
 ## Ringkasan Tiap Pertemuan
 
@@ -70,11 +71,35 @@ npm install
 npx expo start
 ```
 
+### Pertemuan 12 â€” Social Media App Features
+[p12mobilelanjut/](p12mobilelanjut/)
+
+Lanjutan dari project p11 dengan fitur social media app: Story Camera, post dengan filter, Nearby Users Map, Push Notif Chat, Share & Deep Link, dan Save to Gallery.
+
+Stack tambahan: `expo-camera`, `expo-image-picker`, `expo-image-manipulator`, `react-native-maps`, `expo-location`, `expo-notifications`, `expo-sharing`, `expo-media-library`, dan `expo-file-system`.
+
+Firebase:
+
+- Authentication email/password
+- Cloud Firestore
+- Firebase Storage
+- Rules lokal: [firestore.rules](p12mobilelanjut/firestore.rules), [storage.rules](p12mobilelanjut/storage.rules), dan [firebase.json](p12mobilelanjut/firebase.json)
+
+Menjalankan:
+
+```bash
+cd p12mobilelanjut
+npm install
+npx expo start -c
+```
+
+Detail fitur dan checklist demo: [p12mobilelanjut/README.md](p12mobilelanjut/README.md).
+
 ## Prasyarat Umum
 
 - Node.js LTS dan npm
 - Expo Go di perangkat fisik (atau Android Studio / Xcode untuk emulator)
-- Akun Firebase dengan project yang sudah dibuatkan (Authentication & Firestore di-enable) untuk folder p9 dan p11
+- Akun Firebase dengan project yang sudah dibuatkan. Authentication & Firestore diperlukan untuk folder p9/p11, sedangkan p12 juga membutuhkan Firebase Storage.
 
 ## Catatan
 
