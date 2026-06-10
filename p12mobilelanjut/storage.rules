@@ -1,0 +1,32 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return signedIn() && request.auth.uid == userId;
+    }
+
+    match /profile_photos/{fileName} {
+      allow read: if signedIn();
+      allow write: if signedIn()
+        && fileName == request.auth.uid + '.jpg';
+    }
+
+    match /posts/{userId}/{fileName} {
+      allow read: if signedIn();
+      allow write: if isOwner(userId);
+    }
+
+    match /stories/{userId}/{fileName} {
+      allow read: if signedIn();
+      allow write: if isOwner(userId);
+    }
+
+    match /chat_images/{roomId}/{fileName} {
+      allow read, write: if signedIn();
+    }
+  }
+}

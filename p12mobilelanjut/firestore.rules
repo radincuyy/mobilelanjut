@@ -1,0 +1,26 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Users: hanya bisa baca/edit milik sendiri
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Messages: hanya user login yang bisa baca/tulis
+    match /messages/{msgId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Posts sosial pertemuan 12
+    match /posts/{postId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Story kamera pertemuan 12
+    match /stories/{storyId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
